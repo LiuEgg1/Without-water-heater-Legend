@@ -232,6 +232,7 @@ void checkNFC() {
     float userTemp = findUserPreference(cardUID);
     
     if (userTemp > 0) {
+      // 老用户：使用保存的温度偏好
       targetTemp = userTemp;
       
       display.clearDisplay();
@@ -246,24 +247,21 @@ void checkNFC() {
       
       delay(3000);
     } else {
-      // 新用户，保存当前设置
-      if (userCount < 10) {
-        userPrefs[userCount].uid = cardUID;
-        userPrefs[userCount].preferredTemp = targetTemp;
-        userCount++;
-        
-        display.clearDisplay();
-        display.setCursor(0,0);
-        display.println("新用户注册!");
-        display.print("用户ID: ");
-        display.println(cardUID, HEX);
-        display.print("保存温度: ");
-        display.print(targetTemp);
-        display.println(" C");
-        display.display();
-        
-        delay(3000);
-      }
+      // 新用户：先升温至40度，然后等待用户指令
+      targetTemp = 40.0; // 设置目标温度为40度
+      
+      display.clearDisplay();
+      display.setCursor(0,0);
+      display.println("新用户识别!");
+      display.println("正在升温至40度...");
+      display.println("请使用按钮调整");
+      display.println("然后按'合适'保存");
+      display.display();
+      
+      // 不立即保存用户偏好，等待用户确认
+      // 用户可以通过按钮调整温度，然后按"刚刚好"按钮保存偏好
+      
+      delay(3000);
     }
     
     // 等待卡片移开
